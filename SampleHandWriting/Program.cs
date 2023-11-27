@@ -10,7 +10,7 @@ var services = builder.Services;
 services.AddControllersWithViews();
 
 services.AddPredictionEnginePool<ModelInput, ModelOutput>()
-    .FromFile(modelName: HwrModel.Name, filePath: "MLModel.zip", watchForChanges: true);
+    .FromFile(modelName: HwrModel.Name, filePath: "wwwroot/MLModel.zip", watchForChanges: true);
 
 var app = builder.Build();
 
