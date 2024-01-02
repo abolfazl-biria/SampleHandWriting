@@ -4,6 +4,7 @@ using SampleHandWriting.Models;
 using System.Diagnostics;
 using System.Drawing;
 using System.Text;
+using Tesseract;
 
 namespace SampleHandWriting.Controllers;
 
@@ -12,7 +13,21 @@ public class HomeController(PredictionEnginePool<ModelInput, ModelOutput> predic
     private const int SizeOfImage = 32;
     private const int SizeOfArea = 4;
 
+    /// <summary>
+    /// نوشتن متن
+    /// </summary>
+    /// <returns></returns>
     public IActionResult Index()
+    {
+        return View();
+    }
+
+
+    /// <summary>
+    /// آپلود عکس
+    /// </summary>
+    /// <returns></returns>
+    public IActionResult Index2()
     {
         return View();
     }
@@ -42,6 +57,33 @@ public class HomeController(PredictionEnginePool<ModelInput, ModelOutput> predic
             prediction = result.Prediction,
             scores = FormatScores(result.Score),
             pixelValues = string.Join(",", pixelValues)
+        });
+    }
+
+
+    [HttpPost]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public IActionResult Upload2(IFormFile? imageFile)
+    {
+        if (imageFile is not { Length: > 0 })
+        {
+            return BadRequest(new { prediction = "-", dataset = string.Empty });
+        }
+
+        using var ms = new MemoryStream();
+        imageFile.CopyTo(ms);
+        var fileBytes = ms.ToArray();
+
+        using var engine = new TesseractEngine(@"wwwroot\tessdata", "eng", EngineMode.Default);
+        using var img = Pix.LoadFromMemory(fileBytes);
+        using var page = engine.Process(img);
+
+        var text = page.GetText();
+
+        return Ok(new
+        {
+            prediction = text
         });
     }
 

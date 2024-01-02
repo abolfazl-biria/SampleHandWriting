@@ -92,7 +92,7 @@
                 $('#prediction').text('?');
                 $.ajax({
                     type: 'POST',
-                    url: '@Url.Action("Upload", "Home",new { area = "" })',
+                    url: '@Url.Action("Upload2", "Home",new { area = "" })',
                     data: {
                         base64Image: el.toDataURL()
                     }

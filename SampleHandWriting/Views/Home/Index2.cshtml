@@ -1,0 +1,62 @@
+﻿@{
+    ViewData["Title"] = "Home";
+}
+
+<div class="text-center">
+    <p>آپلود تصویر</p>
+
+    <form runat="server">
+        <input accept="image/*" type="file" id="imgInp">
+        <br/>
+        <img id="blah" src="blob:null/c0483a95-9568-4121-be24-c4c2f1ff3b46" alt="your image">
+    </form>
+
+    <br />
+    <p id="prediction" class="h1">?</p>
+    <div>
+        <pre id="scores"></pre>
+    </div>
+
+    <button id="check" class="btn btn-success">بررسی</button>
+</div>
+
+@section Scripts
+{
+    <script type="text/javascript">
+        imgInp.onchange = evt => {
+            const [file] = imgInp.files
+            if (file) {
+                blah.src = URL.createObjectURL(file)
+            }
+        }
+
+        $(document).ready(function() {
+
+            $('#check').click(function() {
+                $('#prediction').text('?');
+
+                const fileUpload = $("#imgInp").get(0);
+                const files = fileUpload.files;
+
+                const formData = new FormData();
+
+                // Looping over all files and add it to FormData object
+                formData.append('imageFile', files[0]);
+
+                $.ajax({
+                    url: '@Url.Action("Upload2", "Home", new {area = ""})',
+                    data: formData,
+                    processData: false,
+                    cache: false,
+                    contentType: false,
+                    type: "POST",
+                }).done(function(msg) {
+                    //console.log(msg.pixelValues);
+                    $('#prediction').text(msg.prediction);
+                    //$('#scores').text(msg.scores);
+                });
+            });
+
+        });
+    </script>
+}
