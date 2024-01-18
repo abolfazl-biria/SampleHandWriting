@@ -8,8 +8,13 @@ using Tesseract;
 
 namespace SampleHandWriting.Controllers;
 
-public class HomeController(PredictionEnginePool<ModelInput, ModelOutput> predictionEnginePool) : Controller
+public class HomeController : Controller
 {
+    private readonly PredictionEnginePool<ModelInput, ModelOutput> _predictionEnginePool;
+    public HomeController(PredictionEnginePool<ModelInput, ModelOutput> predictionEnginePool)
+    {
+        _predictionEnginePool = predictionEnginePool;
+    }
     private const int SizeOfImage = 32;
     private const int SizeOfArea = 4;
 
@@ -50,7 +55,7 @@ public class HomeController(PredictionEnginePool<ModelInput, ModelOutput> predic
 
         var pixelValues = GetPixelValuesFromImage(base64Image.Replace("data:image/png;base64,", ""));
         var input = new ModelInput { PixelValues = pixelValues.ToArray() };
-        var result = predictionEnginePool.Predict(modelName: HwrModel.Name, example: input);
+        var result = _predictionEnginePool.Predict(modelName: HwrModel.Name, example: input);
 
         return Ok(new
         {

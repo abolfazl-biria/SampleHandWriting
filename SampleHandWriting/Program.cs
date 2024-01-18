@@ -7,7 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 var services = builder.Services;
 
-services.AddControllersWithViews();
+services.AddControllersWithViews().AddRazorRuntimeCompilation();
 
 services.AddPredictionEnginePool<ModelInput, ModelOutput>()
     .FromFile(modelName: HwrModel.Name, filePath: "wwwroot/MLModel.zip", watchForChanges: true);
